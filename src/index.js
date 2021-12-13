@@ -1,7 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+require("dotenv").config();
 const app = express();
+
+// connectDB
+const connectDB = require("./config/db");
 
 app.use(cors({ origin: "*" }));
 app.use(morgan("dev"));
@@ -12,8 +16,11 @@ const PORT = process.env.PORT || 4000;
 
 const start = async () => {
   try {
-    await app.listen(PORT);
-    console.log(`Server started on port ${PORT}`);
+    await connectDB(process.env.MONGO_URI);
+    console.log("MongoDB Connected...");
+    app.listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`);
+    });
   } catch (err) {
     console.log(err);
   }
