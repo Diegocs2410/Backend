@@ -13,6 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const PORT = process.env.PORT || 4000;
+// Routes
+app.use("/api/users", require("./routes/user"));
 
 const start = async () => {
   try {
