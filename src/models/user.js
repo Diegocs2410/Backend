@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { internalServerError } = require("../middlewares/message");
 
 const userSchema = new Schema({
   name: {
@@ -27,6 +28,15 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now(),
   },
+});
+
+userSchema.pre("save", async function () {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  } catch (error) {
+    internalServerError(res, error);
+  }
 });
 
 module.exports = model("User", userSchema);
