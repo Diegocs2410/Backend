@@ -22,9 +22,4 @@ userController.createUser = asyncWrapper(async (req, res) => {
   success(res, "Usuario creado satisfactoriamente", newUser);
 });
 
-userController.updateUser = asyncWrapper(async (req, res) => {
-    const { name, email, password } = req.body;
-    const user = await User.findByIdAndUpdate(req.params.id, { name, email, password }, { new: true });
-    
-
 module.exports = userController;
