@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const { internalServerError } = require("../middlewares/message");
+const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
   name: {
@@ -22,7 +22,11 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Contraseña es requerida"],
     trim: true,
-    minlength: [6, "Contraseña debe tener al menos 6 caracteres"],
+    minlength: [8, "Contraseña debe tener al menos 8 caracteres"],
+    match: [
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/,
+      "Contraseña no es valida",
+    ],
   },
   creado: {
     type: Date,
@@ -31,12 +35,8 @@ const userSchema = new Schema({
 });
 
 userSchema.pre("save", async function () {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-  } catch (error) {
-    internalServerError(res, error);
-  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 module.exports = model("User", userSchema);

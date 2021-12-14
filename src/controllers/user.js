@@ -5,7 +5,7 @@ const User = require("../models/user");
 const userController = {};
 
 userController.getUsers = asyncWrapper(async (req, res) => {
-  const users = await User.find();
+  const users = await User.find().select("-password");
   success(res, "Solicitud ok", users);
 });
 
@@ -38,6 +38,18 @@ userController.updateUser = asyncWrapper(async (req, res) => {
     { new: true }
   );
   success(res, "Usuario actualizado satisfactoriamente", userUpdated);
+});
+
+userController.deleteUser = asyncWrapper(async (req, res) => {
+  const user = await searchOne(
+    res,
+    req.params.id,
+    User,
+    "Usuario no encontrado"
+  );
+  if (!user) notFound(res, "Usuario no encontrado");
+  await User.findByIdAndDelete(req.params.id);
+  success(res, "Usuario eliminado satisfactoriamente");
 });
 
 module.exports = userController;
