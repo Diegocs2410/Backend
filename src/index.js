@@ -20,9 +20,7 @@ const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
     console.log("MongoDB Connected...");
-    app.listen(PORT, () => {
-      console.log(`Server started on port ${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
   } catch (err) {
     console.log(err);
   }

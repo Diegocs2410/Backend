@@ -52,4 +52,16 @@ userController.deleteUser = asyncWrapper(async (req, res) => {
   success(res, "Usuario eliminado satisfactoriamente");
 });
 
+userController.login = asyncWrapper(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return notFound(res, "Email o contraseña incorrectos");
+  const user = await User.findOne({ email });
+  if (!user) return notFound(res, "Email o contraseña incorrectos");
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) return notFound(res, "Email o contraseña incorrectos");
+  const token = user.createJWT();
+  success(res, "Login exitoso", { token });
+});
+
 module.exports = userController;
